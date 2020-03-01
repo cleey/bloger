@@ -1,0 +1,35 @@
+
+<article>
+<header>
+	<a href=""> {$now['title']} </a>
+	<div class="post_term">
+		<i class="fa fa-book"></i>{$now['classify']} 
+		<i class="fa fa-tags"></i>{$now['tags']}
+		<i class="fa fa-eye"></i>{$now['pv']}
+	</div>
+</header>
+<div class="content"> {$now['content']} </div>
+
+<nav>
+  <ul class="pager">
+  	<?php
+	    $preurl = "/one/".$pre['id'].".html";
+	    if( isset($html_tags) ) {
+	        $preurl .= "?t=$html_tags";
+	    }
+	    $nexturl = "/one/".$next['id'].".html";
+	    if( isset($html_tags) ) {
+	        $nexturl .= "?t=$html_tags";
+	    }
+    ?>
+
+	<if "$pre">
+		<li class="previous"><a href="{$preurl}"><span aria-hidden="true">&larr;</span>上一页</a></li>
+	</if>
+	<if "$next">
+		<li class="next"><a href="{$nexturl}">下一页  <span aria-hidden="true">&rarr;</span></a></li>
+	</if>
+  </ul>
+</nav>
+
+</article>

@@ -1,0 +1,39 @@
+<?php 
+$module = strtolower('/'.POEM_MODULE.'/'.POEM_CTRL);
+$tmpurl = $module.strtolower('/'.POEM_FUNC);
+$cmeuList = menuList();
+?>
+
+<div class="wd-menu-head">
+	<img src="http://www.cleey.com/image/user/3.jpg" class="img-thumbnail img-circle">
+	<div>
+		欢迎您！<br>
+		管理员
+	</div>
+</div>
+<ul class="wd-menu">
+<?php foreach ($cmeuList as $vof) {
+	$ic='angle-down';
+	$active='';
+	if($vof['p']['url'] == $module ){
+		$active='class="active"';
+		$ic='angle-up';
+	}
+	?>
+<li {$active} >
+	<a href="javascript:void(0);">
+		<i class="fa fa-<?php echo $vof['p']['img'] ?>"></i>  <?php echo $vof['p']['title'] ?>
+		<i class="ri fa fa-<?php echo $ic ?>"></i>
+	</a>
+	<div class='child'>
+	<?php foreach ($vof['c'] as $vo) { ?>
+		<a href="<?php echo $vo['url']; ?>" class="<?php if($vo['url'] == $tmpurl) echo 'active'; ?>">
+			<?php echo $vo['title']; ?>
+		</a>
+	<?php } ?>
+	</div>
+</li>
+<?php } ?>
+</ul>
+
+

@@ -1,0 +1,88 @@
+<!-- simditor -->
+<link href="/static/simditor/styles/font-awesome.css"  rel="stylesheet"/>
+<link href="/static/simditor/styles/simditor.css"  rel="stylesheet"/>
+
+<script src="/static/simditor/scripts/jquery.min.js" ></script>
+<script src="/static/simditor/scripts/module.min.js" ></script>
+<script src="/static/simditor/scripts/uploader.min.js" ></script>
+<script src="/static/simditor/scripts/simditor.min.js" ></script>
+
+<!-- datetimepicker -->
+<link href="/static/datetimepicker/bootstrap-datetimepicker.min.css"  rel="stylesheet"/>
+<script src="/static/datetimepicker/bootstrap-datetimepicker.min.js"></script>
+<script src="/static/datetimepicker/bootstrap-datetimepicker.zh-CN.js"></script>
+
+<div class="panel panel-default">
+	<div class="panel-heading">编辑博文  <if "$post"> - 正在编辑id {$post['id']}</if></div>
+	<div class="panel-body">
+		<form action="POEM_CTRL_URL/save">
+
+			<div class="write-body left">
+				<input type="text" class="form-control auto-param mb20" name="title" placeholder="标题" value="{$post['title']}">
+
+				<div class="write-content">
+					<textarea class="post_content auto-param" name="content" p="文章内容">{:htmlspecialchars($post['content'])}</textarea>
+				</div>
+
+			</div>
+
+			<div class="write-sidebar left">
+				
+				<div class="panel panel-info">
+					<div class="panel-heading">
+						<h3 class="panel-title">分类</h3>
+					</div>
+					<div class="panel-body">
+						<input type="text" name="tags" class="form-control" placeholder="英文逗号 ,  隔开多个分类">
+					</div>
+				</div>
+
+				<div class="panel panel-info">
+					<div class="panel-heading">
+						<h3 class="panel-title">标签</h3>
+					</div>
+					<div class="panel-body">
+						<input type="text" name="classifys" class="form-control" placeholder="英文逗号 ,  隔开多个标签">
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="input-group">
+						<div class="input-group-addon">发布时间</div>
+						<input class="form-control auto-param" name="date" p="发布时间">
+					</div>
+				</div>
+				
+				<div class="write-submit">
+					<button type="submit" class="btn btn-success">发布博文</button>
+				</div>
+			</div>
+
+		</form>
+	</div>
+</div>
+
+
+
+<script type="text/javascript">
+var editor = new Simditor({
+  	textarea: $('.post_content'),
+	upload:{
+	    url: '/blog/ajax_upload_blog_img',
+	    placeholder: '在这里输入文字 ~ ~',
+	    pasteImage: true,
+	    defaultImage: 'image/cleey_blog.png',
+	    fileKey: 'file',
+	    params: null,
+	    connectionCount: 3,
+	    leaveConfirm: '正在上传文件，如果离开上传会自动取消'
+	}
+});
+$(function(){
+	aim2tree( $('.blog-write-classify') );
+	$('input[name=date]').datetimepicker({
+		language: 'zh-CN',
+		format: 'yyyy-mm-dd hh:ii'
+	});
+})
+</script>
+

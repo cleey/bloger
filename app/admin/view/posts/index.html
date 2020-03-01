@@ -1,0 +1,37 @@
+<div class="panel panel-default">
+	<div class="panel-heading">图文列表</div>
+	<div class="panel-body">
+
+		<table class="table table-hover table-striped table-bordered fixed-tb mb0">
+			<thead>
+				<tr>
+					<th>序号</th>
+					<th>标题</th>
+					<th>标签</th>
+					<th>分类</th>
+					<th>创建时间</th>
+					<th>操作</th>
+				</tr>
+			</thead>
+			<tbody>
+				<each "$list as $vo">
+				<tr>
+					<td>{$vo['id']}</td>
+					<td>{$vo['title']}</td>
+					<td>{$vo['tags']}</td>
+					<td>{$vo['classifys']}</td>
+					<td>{$vo['ctime']}</td>
+					<td>
+						<a class="btn btn-xs btn-default" href="POEM_CTRL_URL/add?id={$vo['id']}">编辑</a>
+						<a class="btn btn-xs btn-default " href="/one/{$vo['id']}">查看</a>
+						<a class="btn btn-xs btn-danger auto_del" url="POEM_CTRL_URL/del?id={$vo['id']}">删除</a>
+					</td>
+				</tr>
+				</each>
+			</tbody>
+		</table>
+		<div>{$html}</div>
+
+	</div>
+</div>
+

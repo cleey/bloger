@@ -1,0 +1,41 @@
+
+<if "$tag = i('t') ">
+<div class='tag'>标签：{$tag}</div>
+</if>
+
+<each "$list as $v">
+<div class="grid">
+	<div class="head">
+    <?php
+    $id = $v['id'];
+    $url = "/one/".$id.".html";
+    if( isset($html_tags) ) {
+        $url .= "?t=$html_tags";
+    }
+    ?>
+		<a class="title" href="{$url}">
+			{$v['title']}
+		</a>
+		<div class="post_term">
+			<i class="fa fa-book"></i>{$v['classify']} 
+			<i class="fa fa-tags"></i>{$v['tags']}
+			<i class="fa fa-eye"></i>{$v['pv']}
+		</div>
+	</div>
+	<a class="gitem" href="{$url}">
+		<img class="gitem" src="{$v['thumbnail']}" title="{$v['title']}">
+	</a>
+    <div class="post-deco">
+        <div class="hex hex-small">
+            <div class="hex-inner"><i class="fa"></i></div>
+            <a href="{$url}"> <i class="fa fa-bicycle" aria-hidden="true"></i> </a>
+            <div class="corner-1"></div>
+            <div class="corner-2"></div>
+        </div>
+    </div>
+	<div class="post-content">
+		{:brief_introduce($v['content'])}
+	</div>
+</div>
+</each>
+{$html}

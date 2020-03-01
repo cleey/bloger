@@ -1,0 +1,262 @@
+<style>
+.my-classify{
+  font-size: 13px;
+  position: relative;
+}
+.my-classify ul{ padding: 0!important;margin:0;}
+.my-classify li,.my-classify li.sortable-placeholder{
+  list-style-type: none;
+  border: 1px solid transparent;
+  width: 400px;
+}
+.my-classify li div{
+  cursor: all-scroll;
+  padding-left: 10px;
+  line-height: 30px;
+  min-height: 32px;
+  width: 400px;
+  text-shadow: 0 1px 0 #fff;
+  background: #f1f1f1;
+  margin: 2px 0;
+}
+.my-classify li div a{margin: 8px 5px 0 0;}
+.my-classify li.sortable-placeholder{
+  background: #fff;
+  border: 1px dashed #A59F9F;
+}
+</style>
+<div class="panel panel-default">
+    <div class="panel-heading">后台菜单管理</div>
+    <div class="panel-body">
+        <div class="col-md-9">
+            <ul class="my-classify">
+                <each "$navi_list as $vo">
+                <li class="tree-child" dt-id="{$vo['id']}" dt-pid="{$vo['pid']}" class="checkbox">
+                    <div>
+                        <i class="fa fa-{$vo['img']}"></i> {$vo['title']} - <small>{$vo['url']}</small>
+                        <a class="fr btn btn-default btn-xs auto_del" url="POEM_CTRL_URL/memudel/id/{$vo['id']}">
+                                        <i class="fa fa-trash-o"></i>
+                                    </a>
+                        <if "$vo['pid'] == 0">
+                            <a href="javascript:void(0)" class="fr btn btn-default btn-xs ccc" f="menu_add_modal" pid="{$vo['id']}"> <i class="fa fa-plus"></i> </a>
+                        </if>
+
+                        <a href="javascript:void(0)" class="fr btn btn-default btn-xs ccc" f="menu_upd_modal" title="{$vo['title']}" img="{$vo['img']}" url="{$vo['url']}" id="{$vo['id']}"> <i class="fa fa-edit"></i> </a>
+                    </div>
+                    <ul></ul>
+                </li>
+                </each>
+            </ul>
+        </div>
+        <div class="col-md-3">
+            <button type="button" class="btn btn-default ccc" f="menu_add_modal" pid="0"> 添加菜单 </button>
+            <button type="button" class="btn btn-default ccc" f="saveMenuSort"> 保存排序 </button>
+            <hr>
+            <div class="alert alert-success">只会展示两级排序内的元素</div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="memuModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">添加菜单</h4>
+            </div>
+            <div class="modal-body">
+
+                <form class="form-horizontal" action="POEM_CTRL_URL/memuadd" method="POST">
+                    <!-- 有id 代表编辑 -->
+                    <input type="hidden" name="id" value=""> 
+                    <!-- 有pid 代表添加 -->
+                    <input type="hidden" name="pid" value="0">
+                    <div class="form-group">
+                        <label for="inputPassword3" class="col-sm-2 control-label">图片</label>
+                        <div class="col-sm-10">
+                            <input type="text" name="img" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="inputPassword3" class="col-sm-2 control-label">菜单名称</label>
+                        <div class="col-sm-10">
+                            <input type="text" name="title" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="inputPassword3" class="col-sm-2 control-label">url</label>
+                        <div class="col-sm-10">
+                            <input type="text" name="url" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <button type="submit" class="btn btn-success">保存</button>
+                            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                        </div>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript" src="http://www.cleey.com/Public/plugins/jquery-ui/jquery-ui.min.js"></script>
+
+<script>
+$(function(){
+    // select2tree( $('#categoryModal .parent') );
+
+    var tmp_off_set = 40;
+    aim2tree( $('.my-classify'),tmp_off_set ); // 生成树
+
+    // jquery
+    $('.my-classify').sortable( { 
+        // revert : 100, //表示你移到了一个大致的地方，会在0.3秒内缓慢移动到精确的位置；
+        placeholder: "sortable-placeholder", // 移动时临时位置的class
+        start:  function(event, ui){
+            var lvl = Number(ui.item.attr('lvl'));
+            // 把和本元素相同的lvl的元素两者之间的元素加入本元素ul
+            var flag = 0;
+            ui.item.nextAll().each(function(){
+                if( flag == 1 || $(this).hasClass('sortable-placeholder') ){ return; }
+                var tmplvl = Number( $(this).attr('lvl') );
+                if( tmplvl <= lvl ){ flag = 1; return;}
+                ui.item.children('ul').append( $(this).andSelf() ); // 添加子元素
+                $(this).css('margin-left',(tmplvl-lvl)*tmp_off_set );  // 相对拖动元素距离
+            })
+
+            // 拖拽框高度
+            var l = ui.item.find('ul li').length + 1; // 子元素个数+1
+            var h = ui.item.height();
+            $('.sortable-placeholder').css('height',h*l);
+        },
+        // 拖动的过程会一直触发这个操作
+        sort: function(event, ui){
+            var lvl = tmpGetPostion(ui); // 获取动态位置
+            $('.sortable-placeholder').css('margin-left',lvl * tmp_off_set); // 设置临时位置
+        },
+        beforeStop: function( event, ui ) {
+            var px = $('.sortable-placeholder').css('margin-left');
+            ui.item.css( 'margin-left' , px ); // 更新位置
+            px = px.split('px');
+            var lvl = parseInt(Number(px[0])/tmp_off_set);
+            ui.item.attr('plus_lvl', lvl - Number(ui.item.attr('lvl')) ); // 更新位置
+            ui.item.attr( 'lvl' ,  lvl); // 更新位置
+        },
+        stop: function(event, ui) {
+            // 设置父ID
+            var pid = 0;
+            var lvl = Number( ui.item.attr('lvl') );
+            // 找pid -- 前面有同胞 
+            if( ui.item.prev().length > 0 ){
+                var tmpflag = 0;
+                ui.item.prevAll().each(function(){
+                    if( tmpflag == 1 ){ return;}
+                    // 等级相同
+                    var tmplvl = Number( $(this).attr('lvl') );
+                    if( tmplvl == (lvl - 1) ){ pid = $(this).attr('dt-id'); tmpflag = 1;return; }
+                    if( tmplvl == lvl ){ pid = $(this).attr('dt-pid'); tmpflag = 1;return; }
+                })
+            }
+            ui.item.attr('dt-pid',pid);
+
+            // 将下级放好
+            var plus_lvl = Number( ui.item.attr('plus_lvl') );
+            ui.item.find('ul li').each(function(){
+                var mylvl = Number( $(this).attr('lvl') );
+                var tmplvl= mylvl+ plus_lvl;
+                $(this).attr('lvl',tmplvl);
+                $(this).css('margin-left' , tmplvl*tmp_off_set);
+                // CO( plus_lvl+'-'+mylvl+'-'+tmplvl+'-'+$(this).attr('dt-id') );
+            })
+            ui.item.after( ui.item.find('ul li') );
+        }
+    } );
+
+    // 获取动态位置
+    function tmpGetPostion(ui){
+        var left = ui.position.left;
+        var a_id = ui.item.attr('dt-id');
+
+        var offset = tmp_off_set;
+        var max_lvl = 0;
+        var min_lvl = 0;
+
+        // 获取前一个元素 最大值
+        var aim = $('.sortable-placeholder').prev();
+        if( aim.attr('dt-id') == a_id ){ aim = aim.prev(); } // 获取
+        if( aim.hasClass('tree-child') ){
+            max_lvl = Number( aim.attr('lvl') ) + 1;
+        }else{ return 0; }
+
+        // 获取后一个元素 最小值
+        var aim = $('.sortable-placeholder').next();
+        if( aim.attr('dt-id') == a_id ){ aim = aim.next(); } // 获取
+        if( aim.hasClass('tree-child') ){
+            min_lvl = Number( aim.attr('lvl') );
+        }
+
+        // 计算应该返回区间之类的数
+        left = parseInt( left / offset ) +  Number( ui.item.attr('lvl') ) ;  // 当前偏移量
+        // CO(left + ' - '+ min_lvl + ' - ' + max_lvl );
+        if( left <= min_lvl ){ return min_lvl; }
+        if( left >= max_lvl){ return max_lvl; }
+        return left;
+    }
+
+})
+
+
+// 编辑菜单
+function menu_upd_modal(o){
+    var obj = {
+        id: o.o.attr('id'),
+        pid: '',
+        url: o.o.attr('url'),
+        img: o.o.attr('img'),
+        title: o.o.attr('title'),
+    }
+    initMenuModal(obj);
+    $('#memuModal .modal-title').html('编辑菜单');
+    $('#memuModal').modal({backdrop: 'static', keyboard: false});
+    $('#memuModal .modal-body input[name=title]').focus();
+}
+// 添加菜单
+function menu_add_modal(o){
+    var obj = { id: '', pid: o.o.attr('pid'), url: '', img: '', title: '', }
+    initMenuModal(obj);
+
+    $('#memuModal .modal-title').html('添加菜单');
+    $('#memuModal').modal({backdrop: 'static', keyboard: false});
+    $('#memuModal .modal-body input[name=title]').focus();
+}
+
+function initMenuModal(obj){
+    $('#memuModal .modal-body input[name=id]').val(obj.id);
+    $('#memuModal .modal-body input[name=pid]').val(obj.pid);
+    $('#memuModal .modal-body input[name=url]').val(obj.url);
+    $('#memuModal .modal-body input[name=img]').val(obj.img);
+    $('#memuModal .modal-body input[name=title]').val(obj.title);
+}
+
+function saveMenuSort(){
+    var sort = 1;
+    var str  = ''; // id 排序
+    var pidstr=''; // id 修改 pid
+    $('.my-classify li').each(function(){
+        str+= $(this).attr('dt-id') + '|' + sort++ +';';
+        if( $(this).attr('plus_lvl') != undefined ){
+            pidstr += $(this).attr('dt-id') + '|' + $(this).attr('dt-pid') +';';
+        }
+    })
+    var obj ={
+        url  : '/home/cnavi/memuSort',
+        param: {str:str,pidstr:pidstr}
+    }
+    ccAjax(obj);
+}
+</script>

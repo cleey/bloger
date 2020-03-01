@@ -1,0 +1,50 @@
+<?php
+// $np = 4;
+// $tp = 10;
+// header('Content-Type:text/html;charset=utf-8');
+$num = 5;
+$np	 = (int)$np;   // 当前页
+$tp  = (int)$tp;   // 总页数
+
+$up	 = $np-1;   // 上一页
+$dp  = $np+1;   // 下一页
+
+
+$f 	 = ($np == 1)?'disabled':'';   // 是否为首页
+$e 	 = ($np == $tp)?'disabled':'';  // 是否问尾页
+
+if( $tp > 0){
+
+?>
+<!-- <div> -->
+<ul class="pagination fr">
+	<li class=""> <span>共 {$total} 条 </span> </li>
+	<li class=""> <span>当前 {$np} / {$tp} 页</span> </li>
+	<?php if($np !=1){?>
+	<li class="{$f}"><a href="{$url}/p/1{$clin_page_str}"> << </a></li>
+	<li class="{$f}"><a href="{$url}/p/{$up}{$clin_page_str}"> < </a></li>
+	<?php }?>
+	<?php
+		$sep = floor($num/2);
+		$begin = 1;
+		if( $tp >= $num ){
+			if($np > $sep && $np < ($tp - $sep) ){ $begin = $np - $sep;}
+			else if($np >= ($tp - $sep) ){ $begin = $tp - $num + 1; }
+		}else{
+			$num = $tp;
+		}
+		$sum = 0;
+
+		for ($i=$begin; $i < $num+$begin; $i++) { 
+			$cp = ($np == $i) ? 'class="disabled"':''; //'.$cp.'
+			$tu = ($np == $i) ? 'javascript:void(0);' : $url.'/p/'.$i.$clin_page_str;
+			echo '<li '.$cp.'><a href="'.$tu.'">'.$i.'</a></li>';
+		}
+	?>
+	<?php if($np != $tp){?>
+	<li class="{$e}"><a href="{$url}/p/{$dp}{$clin_page_str}"> > </a></li>
+	<li class="{$e}"><a href="{$url}/p/{$tp}{$clin_page_str}"> >> </a></li>
+	<?php }?>
+</ul>
+<?php } ?>
+<!-- </div> -->
